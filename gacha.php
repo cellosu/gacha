@@ -45,12 +45,27 @@ class Gacha {
     private function getRandom($probability_sum) {
         return rand(1, $probability_sum);
     }
-
-    public function printResult() {
-        print $this->card->comment . "\n";
-    }
 }
 
 $gacha = new Gacha();
 $gacha->start();
-$gacha->printResult();
+
+?>
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html lang="ja">
+        <head>
+                <title>Login01</title>
+        </head>
+        <body>
+                <h2>Welcom</h2>
+                <h1>ガチャ</h1>
+                <p>1回300コイン</p>
+                <p></p>
+                <form action="gacha.php" method="post">
+                        <input type="submit" value="ガチャを回す">
+                </form>
+                <br><br>
+                <p><?php echo $gacha->card->comment; ?></p>
+        </body>
+</html>
