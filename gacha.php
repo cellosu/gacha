@@ -1,4 +1,6 @@
 <?php
+session_start();
+date_default_timezone_set('Asia/Tokyo');
 
 class Card {
     public $type;
@@ -11,17 +13,28 @@ class Card {
         $this->comment = $c;
     }
 }
-
+ 
 class Gacha {
     public $card;
-    public $result;
-
-    private $card_list;
-
+ 
     public function __construct() {
-        $this->card_list[] = new Card("Normal", 89, "Nカードをゲットしました");
-        $this->card_list[] = new Card("Rare", 10, "Rカードをゲットしました");
-        $this->card_list[] = new Card("SuperRare", 1, "SRカードをゲットしました！おめでとう！！");
+        // データベースへの接続
+        try {
+            $dbh = new PDO('mysql:host=localhost;dbname=task;','gacha', 'tasktask');
+        } catch(PDOException $e) {
+            var_dump($e->getMessage());
+            exit;
+        }
+        
+        // 処理
+        $sql = "select * from card";
+        $stmt = $dbh->query($sql);
+        foreach($stmt->fetchAll(PDO::FETCH_ASSOC) as $cards) {
+            $this->card_list[] = new Card($cards['type'], $cards['probability'], $cards['memo']);
+        }
+
+        // 切断
+        $dbh = null;
     }
 
     public function start() {
@@ -45,20 +58,44 @@ class Gacha {
     private function getRandom($probability_sum) {
         return rand(1, $probability_sum);
     }
+
+    public function insert(){
+        
+        // データベースへの接続
+        try {
+            $dbh = new PDO('mysql:host=localhost;dbname=task;','gacha', 'tasktask');
+        } catch(PDOException $e) {
+            var_dump($e->getMessage());
+            exit;
+        }
+
+$name = "susaki";
+$coin = 4000;
+
+        // 処理
+        $stmt = $dbh->prepare("insert into logs (user_name, get_card, coin, time) values(?, ?, ?, ?)");
+        $stmt->execute(array($name, $this->result, $coin, date("Y-m-d H:i:s")));
+        
+        echo date("Y-m-d H:i:s");
+
+        // 切断
+        $dbh = null;
+    }
 }
 
 $gacha = new Gacha();
 $gacha->start();
+$gacha->insert();
+
 
 ?>
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
 <html lang="ja">
         <head>
-                <title>Login01</title>
+                <title>Task</title>
         </head>
         <body>
-                <h2>Welcom</h2>
                 <h1>ガチャ</h1>
                 <p>1回300コイン</p>
                 <p></p>
@@ -67,5 +104,6 @@ $gacha->start();
                 </form>
                 <br><br>
                 <p><?php echo $gacha->card->comment; ?></p>
+                <img src="">
         </body>
 </html>
