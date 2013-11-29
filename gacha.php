@@ -107,10 +107,16 @@ class Gacha {
     }
 }
 
-$gacha = new Gacha();
-$gacha->start();
-$gacha->insert();
-
+print "ようこそ" . $_SESSION['name'] . "さん！<br>";
+print "コイン : " . $_SESSION['coin'] . "<br>";
+if($_SESSION['coin'] < 300)
+    print "コインがたりません";
+else{
+    $_SESSION['coin'] -= 300;
+    $gacha = new Gacha();
+    $gacha->start();
+    $gacha->insert();
+}
 
 ?>
 
