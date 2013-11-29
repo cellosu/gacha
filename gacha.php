@@ -6,17 +6,21 @@ class Card {
     public $type;
     public $probability;
     public $comment;
+    public $pass;
+    public $name;
 
     public function __construct($t, $p, $c) {
         $this->type = $t;
         $this->probability = $p;
         $this->comment = $c;
+        $this->pass = null;
+        $this->name = null;
     }
 }
- 
+
 class Gacha {
     public $card;
- 
+
     public function __construct() {
         // データベースへの接続
         try {
@@ -25,7 +29,7 @@ class Gacha {
             var_dump($e->getMessage());
             exit;
         }
-        
+
         // 処理
         $sql = "select * from card";
         $stmt = $dbh->query($sql);
@@ -50,6 +54,7 @@ class Gacha {
             $current_probability_sum += $card->probability;
             if ($this->result <= $current_probability_sum) {
                 $this->card = $card;
+                $this->getCard($this->card->type);
                 break;
             }
         }
@@ -59,8 +64,30 @@ class Gacha {
         return rand(1, $probability_sum);
     }
 
+    private function getCard($_type)
+    {
+        try {
+            $dbh = new PDO('mysql:host=localhost;dbname=task;','gacha', 'tasktask');
+        } catch(PDOException $e) {
+            var_dump($e->getMessage());
+            exit;
+        }
+
+        // 処理
+        $sql = "select * from cards where Type = '".$_type."' order by rand() limit 1";
+        $sql = "select * from cards where Type = 'Normal' order by rand() limit 1";
+        $stmt = $dbh->query($sql);
+        foreach($stmt->fetchAll(PDO::FETCH_ASSOC) as $card) {
+                $this->card->name = $card['card_name'];
+                $this->card->pass = $card['pass'];
+        }
+        // 切断
+        $dbh = null;
+        //return $_name;
+    }
+
     public function insert(){
-        
+
         // データベースへの接続
         try {
             $dbh = new PDO('mysql:host=localhost;dbname=task;','gacha', 'tasktask');
@@ -69,13 +96,10 @@ class Gacha {
             exit;
         }
 
-$name = "susaki";
-$coin = 4000;
-
         // 処理
         $stmt = $dbh->prepare("insert into logs (user_name, get_card, coin, time) values(?, ?, ?, ?)");
-        $stmt->execute(array($name, $this->result, $coin, date("Y-m-d H:i:s")));
-        
+        $stmt->execute(array($_SESSION['name'], $this->result, $_SESSION['coin'], date("Y-m-d H:i:s")));
+
         echo date("Y-m-d H:i:s");
 
         // 切断
@@ -103,7 +127,8 @@ $gacha->insert();
                         <input type="submit" value="ガチャを回す">
                 </form>
                 <br><br>
+                <p><?php echo $gacha->card->name; ?></p>
+                <img src="<?php echo $gacha->card->pass; ?>">
                 <p><?php echo $gacha->card->comment; ?></p>
-                <img src="">
         </body>
 </html>
