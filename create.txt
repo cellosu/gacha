@@ -1,0 +1,57 @@
+table
+・users
+・card
+・cards
+・logs
+
+------------------------------------------------------------
+create table users (
+user_id int not null auto_increment primary key,
+user_name varchar(255),
+password char(32),
+coin int
+);
+
+insert into users (user_name, pass, coin) values
+('susaki', 'en', 2000);
+
+------------------------------------------------------------
+create table card (
+type varchar(255),
+probability int,
+memo text
+);
+
+insert into card () values
+('Normal', 90, 'Nカードをゲットしました'),
+('Rare', 9, 'Rカードをゲットしました'),
+('SuperRare', 1, 'SRカードをゲットしました！おめでとう!!');
+
+------------------------------------------------------------
+create table cards (
+card_id int not null auto_increment primary key,
+card_name varchar(255),
+type enum('Normal', 'Rare', 'SuperRare') default 'Normal',
+pass varchar(255)
+);
+
+insert into cards (card_name, type, pass) values 
+('Mickey', 'SuperRare', 'pic/sr.jpg'),
+('Minnie', 'Rare', 'pic/r1.jpg'),
+('Pluto', 'Rare', 'pic/r2.jpg');
+
+insert into cards (card_name, pass) values 
+('Donald', 'pic/n1.jpg'),
+('Daisy', 'pic/n2.jpg'),
+('Goofy', 'pic/n3.jpg'),
+('Stittch', 'pic/n4.jpg');
+
+-----------------------------------------------------------
+create table logs (
+user_name varchar(255),
+get_card varchar(255),
+coin int,
+time datetime
+)
+
+insertはgacha.phpのinsert()から
