@@ -30,7 +30,7 @@ class Gacha {
             exit;
         }
 
-        // 処理
+        // クラスカードの初期化
         $sql = "select * from card";
         $stmt = $dbh->query($sql);
         foreach($stmt->fetchAll(PDO::FETCH_ASSOC) as $cards) {
@@ -73,9 +73,8 @@ class Gacha {
             exit;
         }
 
-        // 処理
+        // $_typeによってランダムにカードを選択
         $sql = "select * from cards where Type = '".$_type."' order by rand() limit 1";
-        $sql = "select * from cards where Type = 'Normal' order by rand() limit 1";
         $stmt = $dbh->query($sql);
         foreach($stmt->fetchAll(PDO::FETCH_ASSOC) as $card) {
                 $this->card->name = $card['card_name'];
@@ -86,8 +85,8 @@ class Gacha {
         //return $_name;
     }
 
+    // データベースの更新
     public function insert(){
-
         // データベースへの接続
         try {
             $dbh = new PDO('mysql:host=localhost;dbname=task;','gacha', 'tasktask');
@@ -96,19 +95,23 @@ class Gacha {
             exit;
         }
 
-        // 処理
+        // ユーザが引いたカードのログ
         $stmt = $dbh->prepare("insert into logs (user_name, get_card, coin, time) values(?, ?, ?, ?)");
-        $stmt->execute(array($_SESSION['name'], $this->result, $_SESSION['coin'], date("Y-m-d H:i:s")));
+        $stmt->execute(array($_SESSION['name'], $this->card->name, $_SESSION['coin'], date("Y-m-d H:i:s")));
 
-        echo date("Y-m-d H:i:s");
+       // コインの更新
+       $sql = "update users set coin = ".$_SESSION['coin']." where user_id = ".$_SESSION['id'];
+       $stmt = $dbh->query($sql);
+       foreach($stmt->fetchAll(PDO::FETCH_ASSOC) as $user) {
+           print $user['coin']."\n";
+       }
 
         // 切断
         $dbh = null;
     }
 }
 
-print "ようこそ" . $_SESSION['name'] . "さん！<br>";
-print "コイン : " . $_SESSION['coin'] . "<br>";
+// コインによる制限
 if($_SESSION['coin'] < 300)
     print "コインがたりません";
 else{
@@ -122,19 +125,23 @@ else{
 
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
 <html lang="ja">
-        <head>
-                <title>Task</title>
-        </head>
-        <body>
-                <h1>ガチャ</h1>
-                <p>1回300コイン</p>
-                <p></p>
-                <form action="gacha.php" method="post">
-                        <input type="submit" value="ガチャを回す">
-                </form>
-                <br><br>
-                <p><?php echo $gacha->card->name; ?></p>
-                <img src="<?php echo $gacha->card->pass; ?>">
-                <p><?php echo $gacha->card->comment; ?></p>
-        </body>
+   <head>
+      <meta http-equiv="Content-Type" content="text/html; UTF-8">
+      <meta http-equiv="Content-Style-Type" content="text/css">
+      <link rel="stylesheet" type="text/css" href="style.css">
+      <title>Login</title>
+   </head>
+   <body>
+      <p>ようこそ<?php echo $_SESSION['name']; ?>さん！</p>
+      <p>コイン : <?php echo $_SESSION['coin']; ?></p>
+       <h2>結果</h2>
+      <p><?php echo $gacha->card->name; ?></p>
+      <img src="<?php echo $gacha->card->pass; ?>">
+      <p><?php echo $gacha->card->comment; ?></p>
+       <h2>ガチャ</h2>
+       <form action="gacha.php" method="post">
+          1回300コイン<br>
+          <input type="submit" value="ガチャを回す">
+      </form>
+   </body>
 </html>
