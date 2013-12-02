@@ -1,3 +1,10 @@
+hostname:
+ gach
+pass:
+ tasktask
+datebase:
+ task
+
 table
 ・users
 ・card
@@ -13,7 +20,9 @@ coin int
 );
 
 insert into users (user_name, pass, coin) values
-('susaki', 'en', 2000);
+('cello', 'en1', 2000),
+('viola', 'en2', 3000),
+('violin', 'en3', 4000);
 
 ------------------------------------------------------------
 create table card (
