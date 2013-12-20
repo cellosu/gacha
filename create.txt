@@ -31,7 +31,7 @@ probability int,
 memo text
 );
 
-insert into card () values
+insert into rarity (type, probability, memo) values
 ('Normal', 90, 'Nカードをゲットしました'),
 ('Rare', 9, 'Rカードをゲットしました'),
 ('SuperRare', 1, 'SRカードをゲットしました！おめでとう!!');
