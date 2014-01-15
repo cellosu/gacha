@@ -25,7 +25,7 @@ try {
     $stmt = $dbh->query($sql);
 // id と pass が適切かどうか
     foreach($stmt->fetchAll(PDO::FETCH_ASSOC) as $user) {
-        if($_SESSION['password'] == $user['password']){
+        if($user['password'] == crypt($_SESSION['password'], $user['password'])){
             $_SESSION['name'] = $user['user_name'];
             $_SESSION['coin'] = $user['coin'];
             break;
