@@ -15,14 +15,14 @@ table
 create table users (
 user_id int not null auto_increment primary key,
 user_name varchar(255),
-password char(32),
+password char(36),
 coin int
 );
 
 insert into users (user_name, password, coin) values
-('cello', '711d6d0272f84193afc991a50492f57a', 2000),
-('viola', 'c31ac812dbb4b1a273b3c2d3bd465690', 3000),
-('violin', 'baed9eee805dceb10b8701814740141d', 4000);
+('cello', '$1$fD5SpNVw$V46XVDyDTF0fzW7cHMULU0', 2000),
+('viola', '$1$q3iugora$ifL3wdDFqE6B8q87GS9bJ0', 3000),
+('violin', '$1$RS0PWklr$BV/ffHydlWwdlT4ogYoQx1', 4000);
 
 ------------------------------------------------------------
 create table rarity (
